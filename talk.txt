@@ -1,0 +1,152 @@
+
+=======================================================
+Mock Objects With Fudge
+=======================================================
+
+:Author: Kumar McMillan
+:Venue: PyCon 2011
+
+trivia
+======
+
+.. class:: center
+
+  .. class:: huge
+
+    WHAT DOES PYTHON
+
+  .. class:: huge
+
+    HAVE MORE OF
+
+  .. class:: huge
+
+    BESIDES WEB FRAMEWORKS?
+
+trivia
+======
+
+Answer: **mock testing libraries**
+
+- chai
+- Dingus
+- flexmock
+- fudge
+- mock
+- Mocker
+- mox
+- pmock
+- python-mock
+
+sigh
+====
+
+.. image:: images/lmgtfy.png
+
+mocks
+=====
+
+.. class:: center
+
+  .. class:: huge
+
+    WHEN SHOULD YOU
+
+  .. class:: huge
+
+    USE MOCK OBJECTS?
+
+mocks
+=====
+
+Answer: **ALMOST NEVER**
+
+but ... **yes**, for:
+
+- external web services
+- exception handling
+
+mocks
+=====
+
+Answer: **ALMOST NEVER**
+
+but ... **maybe**, to:
+
+- make things faster
+- test in greater isolation
+
+Another mock framework!
+=======================
+
+.. code-block:: bash
+
+  pip install fudge
+
+Extensive documentation:
+
+- http://farmdev.com/projects/fudge/
+- http://farmdev.com/projects/fudge/why-fudge.html
+
+email
+=====
+
+.. code-block:: python
+  
+  >>> import smtplib
+  >>> def email_admin():
+  ...     s = smtplib.SMTP()
+  ...     admin = 'kumar.mcmillan@gmail.com'
+  ...     s.sendmail('server@root', [admin],
+  ...                'Haters gonna hate')
+  ...     s.quit()
+  ...
+  
+
+email test
+==========
+
+.. code-block:: python
+
+  >>> import fudge
+  >>> @fudge.patch('smtplib.SMTP')
+  ... def test(fake_SMTP):
+  ...     (fake_SMTP.expects_call()
+  ...      .returns_fake()
+  ...      .expects('sendmail')
+  ...      .expects('quit'))
+  ...     email_admin()
+  ...
+  >>> test()
+
+email test
+==========
+
+.. code-block:: python
+
+  >>> from fudge.inspector import arg
+  >>> @fudge.patch('smtplib.SMTP')
+  ... def test(SMTP):
+  ...     (SMTP.expects_call().returns_fake().expects('sendmail')
+  ...      .with_args(arg.any_value(), ['foo@bar'], arg.any_value()))
+  ...     email_admin()
+  ...
+  >>> test()
+  Traceback (most recent call last):
+  ...
+  AssertionError: fake:smtplib.SMTP().sendmail(arg.any_value(), ['foo@bar'], arg.any_value()) was called unexpectedly with args ('server@root', ['kumar.mcmillan@gmail.com'], 'Haters gonna hate')
+
+email test
+==========
+
+.. code-block:: python
+
+  Traceback (most recent call last):
+  ...
+  AssertionError: 
+  fake:smtplib.SMTP().sendmail(arg.any_value(),
+                               ['foo@bar'],
+                               arg.any_value()) 
+  was called unexpectedly with args
+  ('server@root', ['kumar.mcmillan@gmail.com'],
+   'Haters gonna hate')
