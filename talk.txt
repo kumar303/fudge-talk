@@ -1,6 +1,6 @@
 
 =======================================================
-Mock Objects With Fudge
+Fudging It With Mock Objects
 =======================================================
 
 :Author: Kumar McMillan
@@ -33,13 +33,14 @@ Answer: **mock testing libraries**
 - flexmock
 - fudge
 - mock
+- MiniMock
 - Mocker
 - mox
 - pmock
 - python-mock
 
-sigh
-====
+Seriously?
+==========
 
 .. image:: images/lmgtfy.png
 
@@ -56,18 +57,18 @@ mocks
 
     USE MOCK OBJECTS?
 
-mocks
-=====
+When to use mocks...
+====================
 
 Answer: **ALMOST NEVER**
 
 but ... **yes**, for:
 
-- external web services
-- exception handling
+1. external web services
+2. exception handling
 
-mocks
-=====
+When to use mocks...
+====================
 
 Answer: **ALMOST NEVER**
 
@@ -76,8 +77,8 @@ but ... **maybe**, to:
 - make things faster
 - test in greater isolation
 
-Another mock framework!
-=======================
+Yet another mock library!
+=========================
 
 .. code-block:: bash
 
@@ -92,61 +93,117 @@ email
 =====
 
 .. code-block:: python
-  
+
   >>> import smtplib
-  >>> def email_admin():
-  ...     s = smtplib.SMTP()
+  >>> def email_admin(msg):
   ...     admin = 'kumar.mcmillan@gmail.com'
-  ...     s.sendmail('server@root', [admin],
-  ...                'Haters gonna hate')
+  ...     s = smtplib.SMTP()
+  ...     s.sendmail('root@serv', [admin], msg)
   ...     s.quit()
   ...
-  
 
-email test
+
+test email
 ==========
 
-.. code-block:: python
-
+.. hidden
   >>> import fudge
-  >>> @fudge.patch('smtplib.SMTP')
-  ... def test(fake_SMTP):
-  ...     (fake_SMTP.expects_call()
-  ...      .returns_fake()
-  ...      .expects('sendmail')
-  ...      .expects('quit'))
-  ...     email_admin()
+
+.. code-block:: python
+
+  >>> @fudge.patch('smtplib.SMTP.sendmail',
+  ...              'smtplib.SMTP.quit')
+  ... def test(sendmail, quit):
+  ...     sendmail.expects_call()
+  ...     quit.expects_call()
+  ...     email_admin('Haters gonna hate')
   ...
   >>> test()
 
 email test
 ==========
 
-.. code-block:: python
-
+.. hidden
   >>> from fudge.inspector import arg
-  >>> @fudge.patch('smtplib.SMTP')
-  ... def test(SMTP):
-  ...     (SMTP.expects_call().returns_fake().expects('sendmail')
-  ...      .with_args(arg.any_value(), ['foo@bar'], arg.any_value()))
-  ...     email_admin()
+
+.. code-block:: python
+
+  >>> @fudge.patch('smtplib.SMTP.sendmail',
+  ...              'smtplib.SMTP.quit')
+  ... def test(sendmail, quit):
+  ...     (sendmail.expects_call()
+  ...      .with_args(arg.any(), ['foo@bar'], arg.any()))
+  ...     email_admin('Haters gonna hate')
   ...
   >>> test()
   Traceback (most recent call last):
   ...
-  AssertionError: fake:smtplib.SMTP().sendmail(arg.any_value(), ['foo@bar'], arg.any_value()) was called unexpectedly with args ('server@root', ['kumar.mcmillan@gmail.com'], 'Haters gonna hate')
+  AssertionError: fake:smtplib.SMTP.sendmail(arg.any(), ['foo@bar'], arg.any()) was called unexpectedly with args ('root@serv', ['kumar.mcmillan@gmail.com'], 'Haters gonna hate')
 
-email test
-==========
+Nice traceback
+==============
 
 .. code-block:: python
 
   Traceback (most recent call last):
   ...
-  AssertionError: 
-  fake:smtplib.SMTP().sendmail(arg.any_value(),
-                               ['foo@bar'],
-                               arg.any_value()) 
+  AssertionError:
+  fake:smtplib.SMTP.sendmail(arg.any(),
+                             ['foo@bar'],
+                             arg.any())
   was called unexpectedly with args
-  ('server@root', ['kumar.mcmillan@gmail.com'],
+  ('root@serv', ['kumar.mcmillan@gmail.com'],
    'Haters gonna hate')
+
+Exceptions
+==========
+
+.. code-block:: python
+
+  >>> def get_data(url):
+  ...     from urllib2 import urlopen, URLError
+  ...     try:
+  ...         f = urlopen(url)
+  ...     except URLError:
+  ...         return None
+  ...     else:
+  ...         return f.read()
+  ...
+
+Exceptions
+==========
+
+.. hidden
+  >>> from urllib2 import URLError
+
+.. code-block:: python
+
+  >>> @fudge.patch('urllib2.urlopen')
+  ... def test(urlopen):
+  ...     e = URLError('nodename nor servname provided')
+  ...     urlopen.expects_call().raises(e)
+  ...     d = get_data('http://badmonkey.net/data.json')
+  ...     assert d is None
+  ...
+  >>> test()
+
+Fudge features
+==============
+
+- logical expectations
+
+  - no postmortem inspection
+
+- direct tracebacks
+- informative exceptions
+- has extensive documentation
+- supports Python 3 and Jython
+
+Just fudge it
+=============
+
+pip install fudge
+
+http://farmdev.com/projects/fudge/
+
+bonus: inspired by Mocha (inspired by jMock)

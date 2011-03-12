@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
 <meta name="version" content="S5 1.1" />
-<title>Mock Objects With Fudge</title>
+<title>Fudging It With Mock Objects</title>
 <meta name="author" content="Kumar McMillan" />
 <style type="text/css">
 
@@ -336,13 +336,13 @@ ul.auto-toc {
 
 </div>
 <div id="footer">
-<h1>Mock Objects With Fudge</h1>
+<h1>Fudging It With Mock Objects</h1>
 
 </div>
 </div>
 <div class="presentation">
 <div class="slide" id="slide0">
-<h1 class="title">Mock Objects With Fudge</h1>
+<h1 class="title">Fudging It With Mock Objects</h1>
 <table class="docinfo" frame="void" rules="none">
 <col class="docinfo-name" />
 <col class="docinfo-content" />
@@ -370,14 +370,15 @@ ul.auto-toc {
 <li>flexmock</li>
 <li>fudge</li>
 <li>mock</li>
+<li>MiniMock</li>
 <li>Mocker</li>
 <li>mox</li>
 <li>pmock</li>
 <li>python-mock</li>
 </ul>
 </div>
-<div class="slide" id="sigh">
-<h1>sigh</h1>
+<div class="slide" id="seriously">
+<h1>Seriously?</h1>
 <img alt="images/lmgtfy.png" src="images/lmgtfy.png" />
 </div>
 <div class="slide" id="mocks">
@@ -385,17 +386,17 @@ ul.auto-toc {
 <p class="huge center">WHEN SHOULD YOU</p>
 <p class="huge center">USE MOCK OBJECTS?</p>
 </div>
-<div class="slide" id="id2">
-<h1>mocks</h1>
+<div class="slide" id="when-to-use-mocks">
+<h1>When to use mocks...</h1>
 <p>Answer: <strong>ALMOST NEVER</strong></p>
 <p>but ... <strong>yes</strong>, for:</p>
-<ul class="simple">
+<ol class="arabic simple">
 <li>external web services</li>
 <li>exception handling</li>
-</ul>
+</ol>
 </div>
-<div class="slide" id="id3">
-<h1>mocks</h1>
+<div class="slide" id="id2">
+<h1>When to use mocks...</h1>
 <p>Answer: <strong>ALMOST NEVER</strong></p>
 <p>but ... <strong>maybe</strong>, to:</p>
 <ul class="simple">
@@ -403,8 +404,8 @@ ul.auto-toc {
 <li>test in greater isolation</li>
 </ul>
 </div>
-<div class="slide" id="another-mock-framework">
-<h1>Another mock framework!</h1>
+<div class="slide" id="yet-another-mock-library">
+<h1>Yet another mock library!</h1>
 <div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%">pip install fudge
 </pre></div>
 <p>Extensive documentation:</p>
@@ -416,56 +417,103 @@ ul.auto-toc {
 <div class="slide" id="email">
 <h1>email</h1>
 <div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">smtplib</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">email_admin</span>():
-<span style="color: #666666">...</span>     s <span style="color: #666666">=</span> smtplib<span style="color: #666666">.</span>SMTP()
+<span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">email_admin</span>(msg):
 <span style="color: #666666">...</span>     admin <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;kumar.mcmillan@gmail.com&#39;</span>
-<span style="color: #666666">...</span>     s<span style="color: #666666">.</span>sendmail(<span style="color: #BA2121">&#39;server@root&#39;</span>, [admin],
-<span style="color: #666666">...</span>                <span style="color: #BA2121">&#39;Haters gonna hate&#39;</span>)
+<span style="color: #666666">...</span>     s <span style="color: #666666">=</span> smtplib<span style="color: #666666">.</span>SMTP()
+<span style="color: #666666">...</span>     s<span style="color: #666666">.</span>sendmail(<span style="color: #BA2121">&#39;root@serv&#39;</span>, [admin], msg)
 <span style="color: #666666">...</span>     s<span style="color: #666666">.</span>quit()
 <span style="color: #666666">...</span>
 </pre></div>
 </div>
-<div class="slide" id="email-test">
-<h1>email test</h1>
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">fudge</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #AA22FF">@fudge.patch</span>(<span style="color: #BA2121">&#39;smtplib.SMTP&#39;</span>)
-<span style="color: #666666">...</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test</span>(fake_SMTP):
-<span style="color: #666666">...</span>     (fake_SMTP<span style="color: #666666">.</span>expects_call()
-<span style="color: #666666">...</span>      <span style="color: #666666">.</span>returns_fake()
-<span style="color: #666666">...</span>      <span style="color: #666666">.</span>expects(<span style="color: #BA2121">&#39;sendmail&#39;</span>)
-<span style="color: #666666">...</span>      <span style="color: #666666">.</span>expects(<span style="color: #BA2121">&#39;quit&#39;</span>))
-<span style="color: #666666">...</span>     email_admin()
+<div class="slide" id="test-email">
+<h1>test email</h1>
+<!-- hidden
+>>> import fudge -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #AA22FF">@fudge.patch</span>(<span style="color: #BA2121">&#39;smtplib.SMTP.sendmail&#39;</span>,
+<span style="color: #666666">...</span>              <span style="color: #BA2121">&#39;smtplib.SMTP.quit&#39;</span>)
+<span style="color: #666666">...</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test</span>(sendmail, quit):
+<span style="color: #666666">...</span>     sendmail<span style="color: #666666">.</span>expects_call()
+<span style="color: #666666">...</span>     quit<span style="color: #666666">.</span>expects_call()
+<span style="color: #666666">...</span>     email_admin(<span style="color: #BA2121">&#39;Haters gonna hate&#39;</span>)
 <span style="color: #666666">...</span>
 <span style="color: #666666">&gt;&gt;&gt;</span> test()
 </pre></div>
 </div>
-<div class="slide" id="id4">
+<div class="slide" id="email-test">
 <h1>email test</h1>
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">fudge.inspector</span> <span style="color: #008000; font-weight: bold">import</span> arg
-<span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #AA22FF">@fudge.patch</span>(<span style="color: #BA2121">&#39;smtplib.SMTP&#39;</span>)
-<span style="color: #666666">...</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test</span>(SMTP):
-<span style="color: #666666">...</span>     (SMTP<span style="color: #666666">.</span>expects_call()<span style="color: #666666">.</span>returns_fake()<span style="color: #666666">.</span>expects(<span style="color: #BA2121">&#39;sendmail&#39;</span>)
-<span style="color: #666666">...</span>      <span style="color: #666666">.</span>with_args(arg<span style="color: #666666">.</span>any_value(), [<span style="color: #BA2121">&#39;foo@bar&#39;</span>], arg<span style="color: #666666">.</span>any_value()))
-<span style="color: #666666">...</span>     email_admin()
+<!-- hidden
+>>> from fudge.inspector import arg -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #AA22FF">@fudge.patch</span>(<span style="color: #BA2121">&#39;smtplib.SMTP.sendmail&#39;</span>,
+<span style="color: #666666">...</span>              <span style="color: #BA2121">&#39;smtplib.SMTP.quit&#39;</span>)
+<span style="color: #666666">...</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test</span>(sendmail, quit):
+<span style="color: #666666">...</span>     (sendmail<span style="color: #666666">.</span>expects_call()
+<span style="color: #666666">...</span>      <span style="color: #666666">.</span>with_args(arg<span style="color: #666666">.</span>any(), [<span style="color: #BA2121">&#39;foo@bar&#39;</span>], arg<span style="color: #666666">.</span>any()))
+<span style="color: #666666">...</span>     email_admin(<span style="color: #BA2121">&#39;Haters gonna hate&#39;</span>)
 <span style="color: #666666">...</span>
 <span style="color: #666666">&gt;&gt;&gt;</span> test()
 Traceback (most recent call last):
 <span style="color: #666666">...</span>
-<span style="color: #D2413A; font-weight: bold">AssertionError</span>: fake:smtplib<span style="color: #666666">.</span>SMTP()<span style="color: #666666">.</span>sendmail(arg<span style="color: #666666">.</span>any_value(), [<span style="color: #BA2121">&#39;foo@bar&#39;</span>], arg<span style="color: #666666">.</span>any_value()) was called unexpectedly <span style="color: #008000; font-weight: bold">with</span> args (<span style="color: #BA2121">&#39;server@root&#39;</span>, [<span style="color: #BA2121">&#39;kumar.mcmillan@gmail.com&#39;</span>], <span style="color: #BA2121">&#39;Haters gonna hate&#39;</span>)
+<span style="color: #D2413A; font-weight: bold">AssertionError</span>: fake:smtplib<span style="color: #666666">.</span>SMTP<span style="color: #666666">.</span>sendmail(arg<span style="color: #666666">.</span>any(), [<span style="color: #BA2121">&#39;foo@bar&#39;</span>], arg<span style="color: #666666">.</span>any()) was called unexpectedly <span style="color: #008000; font-weight: bold">with</span> args (<span style="color: #BA2121">&#39;root@serv&#39;</span>, [<span style="color: #BA2121">&#39;kumar.mcmillan@gmail.com&#39;</span>], <span style="color: #BA2121">&#39;Haters gonna hate&#39;</span>)
 </pre></div>
 </div>
-<div class="slide" id="id5">
-<h1>email test</h1>
+<div class="slide" id="nice-traceback">
+<h1>Nice traceback</h1>
 <div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%">Traceback (most recent call last):
 <span style="color: #666666">...</span>
 <span style="color: #D2413A; font-weight: bold">AssertionError</span>:
-fake:smtplib<span style="color: #666666">.</span>SMTP()<span style="color: #666666">.</span>sendmail(arg<span style="color: #666666">.</span>any_value(),
-                             [<span style="color: #BA2121">&#39;foo@bar&#39;</span>],
-                             arg<span style="color: #666666">.</span>any_value())
+fake:smtplib<span style="color: #666666">.</span>SMTP<span style="color: #666666">.</span>sendmail(arg<span style="color: #666666">.</span>any(),
+                           [<span style="color: #BA2121">&#39;foo@bar&#39;</span>],
+                           arg<span style="color: #666666">.</span>any())
 was called unexpectedly <span style="color: #008000; font-weight: bold">with</span> args
-(<span style="color: #BA2121">&#39;server@root&#39;</span>, [<span style="color: #BA2121">&#39;kumar.mcmillan@gmail.com&#39;</span>],
+(<span style="color: #BA2121">&#39;root@serv&#39;</span>, [<span style="color: #BA2121">&#39;kumar.mcmillan@gmail.com&#39;</span>],
  <span style="color: #BA2121">&#39;Haters gonna hate&#39;</span>)
 </pre></div>
+</div>
+<div class="slide" id="exceptions">
+<h1>Exceptions</h1>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">get_data</span>(url):
+<span style="color: #666666">...</span>     <span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">urllib2</span> <span style="color: #008000; font-weight: bold">import</span> urlopen, URLError
+<span style="color: #666666">...</span>     <span style="color: #008000; font-weight: bold">try</span>:
+<span style="color: #666666">...</span>         f <span style="color: #666666">=</span> urlopen(url)
+<span style="color: #666666">...</span>     <span style="color: #008000; font-weight: bold">except</span> URLError:
+<span style="color: #666666">...</span>         <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000">None</span>
+<span style="color: #666666">...</span>     <span style="color: #008000; font-weight: bold">else</span>:
+<span style="color: #666666">...</span>         <span style="color: #008000; font-weight: bold">return</span> f<span style="color: #666666">.</span>read()
+<span style="color: #666666">...</span>
+</pre></div>
+</div>
+<div class="slide" id="id3">
+<h1>Exceptions</h1>
+<!-- hidden
+>>> from urllib2 import URLError -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #AA22FF">@fudge.patch</span>(<span style="color: #BA2121">&#39;urllib2.urlopen&#39;</span>)
+<span style="color: #666666">...</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test</span>(urlopen):
+<span style="color: #666666">...</span>     e <span style="color: #666666">=</span> URLError(<span style="color: #BA2121">&#39;nodename nor servname provided&#39;</span>)
+<span style="color: #666666">...</span>     urlopen<span style="color: #666666">.</span>expects_call()<span style="color: #666666">.</span>raises(e)
+<span style="color: #666666">...</span>     d <span style="color: #666666">=</span> get_data(<span style="color: #BA2121">&#39;http://badmonkey.net/data.json&#39;</span>)
+<span style="color: #666666">...</span>     <span style="color: #008000; font-weight: bold">assert</span> d <span style="color: #AA22FF; font-weight: bold">is</span> <span style="color: #008000">None</span>
+<span style="color: #666666">...</span>
+<span style="color: #666666">&gt;&gt;&gt;</span> test()
+</pre></div>
+</div>
+<div class="slide" id="fudge-features">
+<h1>Fudge features</h1>
+<ul class="simple">
+<li>logical expectations<ul>
+<li>no postmortem inspection</li>
+</ul>
+</li>
+<li>direct tracebacks</li>
+<li>informative exceptions</li>
+<li>has extensive documentation</li>
+<li>supports Python 3 and Jython</li>
+</ul>
+</div>
+<div class="slide" id="just-fudge-it">
+<h1>Just fudge it</h1>
+<p>pip install fudge</p>
+<p><a class="reference external" href="http://farmdev.com/projects/fudge/">http://farmdev.com/projects/fudge/</a></p>
+<p>bonus: inspired by Mocha (inspired by jMock)</p>
 </div>
 </div>
 </body>
