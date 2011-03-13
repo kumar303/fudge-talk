@@ -209,4 +209,4 @@ http://farmdev.com/projects/fudge/
 
 bonus: inspired by Mocha (inspired by jMock)
 
-thanks! @kumar303
+thanks! `@kumar303 <http://twitter.com/kumar303>`_
