@@ -64,7 +64,7 @@ Answer: **ALMOST NEVER**
 
 but ... **yes**, for:
 
-1. external web services
+1. The Internet (web service, email)
 2. exception handling
 
 When to use mocks...
@@ -193,6 +193,7 @@ Fudge features
 - logical expectations
 
   - no postmortem inspection
+  - no record/playback
 
 - direct tracebacks
 - informative exceptions
