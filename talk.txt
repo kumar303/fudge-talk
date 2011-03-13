@@ -208,3 +208,5 @@ pip install fudge
 http://farmdev.com/projects/fudge/
 
 bonus: inspired by Mocha (inspired by jMock)
+
+thanks! @kumar303
