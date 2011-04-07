@@ -4,7 +4,6 @@ Fudging It With Mock Objects
 =======================================================
 
 :Author: Kumar McMillan
-:Venue: PyCon 2011
 
 trivia
 ======
@@ -28,6 +27,7 @@ trivia
 
 Answer: **mock testing libraries**
 
+- CaptureMock
 - chai
 - Dingus
 - flexmock
@@ -198,7 +198,7 @@ Fudge features
 - direct tracebacks
 - informative exceptions
 - has extensive documentation
-- supports Python 3 and Jython
+- not in sync with real objects!
 
 Just fudge it
 =============
